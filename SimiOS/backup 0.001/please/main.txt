@@ -1,0 +1,10 @@
+https://github.com/chipsetx/Simple-Kernel-in-C-and-Assembly
+
+#in cmd:
+wsl
+
+#dann:
+./run.sh
+
+#normales terminal:
+qemu-system-i386 -kernel kernel.iso

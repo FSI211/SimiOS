@@ -1,0 +1,5 @@
+main.sim:
+call 0x001
+then:
+enter.
+end;;

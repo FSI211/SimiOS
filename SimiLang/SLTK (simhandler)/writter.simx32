@@ -1,0 +1,5 @@
+call 0x2407:
+ this:
+  doout!();
+call 0x240711:
+ end!()

@@ -1,0 +1,105 @@
+#define WHITE_TXT 0x07 /* light gray on black text */
+
+void k_clear_screen();
+void sleep();
+unsigned int k_printf(char *message, unsigned int line);
+
+unsigned char inb(unsigned short port) {
+    unsigned char value;
+    __asm__ __volatile__("inb %w1, %b0" : "=a"(value) : "Nd"(port));
+    return value;
+}
+
+// Port schreiben (8 Bit)
+void outb(unsigned short port, unsigned char value) {
+    __asm__ __volatile__("outb %b0, %w1" : : "a"(value), "Nd"(port));
+}
+
+/* k_printf : the message and the line # */
+unsigned int k_printf(char *message, unsigned int line)
+{
+	char *vidmem = (char *) 0xb8000;
+	unsigned int i=0;
+
+	i=(line*80*2);
+
+	while(*message!=0)
+	{
+		if(*message=='\n') // check for a new line
+		{
+			line++;
+			i=(line*80*2);
+			*message++;
+		} else {
+			vidmem[i]=*message;
+			*message++;
+			i++;
+			vidmem[i]=WHITE_TXT;
+			i++;
+		};
+	};
+
+	return(1);
+}
+
+void boot(int load) {
+    k_printf("Initalizing Kernel, loading Kernel, booting Kernel...", 0);
+}
+
+void sleep(int seconds) {
+    volatile int i = 0;
+    while (i < (10000000 * seconds)) {
+        i++;
+    }
+}
+
+/* k_clear_screen : to clear the entire text screen */
+void k_clear_screen()
+{
+	char *vidmem = (char *) 0xb8000;
+	unsigned int i=0;
+	while(i < (80*25*2))
+	{
+		vidmem[i]=' ';
+		i++;
+		vidmem[i]=WHITE_TXT;
+		i++;
+	};
+};
+
+// Funktion zum Initialisieren der Maus
+void init_mouse() {
+    // Senden des Befehls zur Aktivierung der Maus über den Befehlsport
+    outb(0x64, 0xA8);
+
+    // Warten auf die Bereitschaft der Maus über den Statusport
+    while ((inb(0x64) & 0x02) != 0x00);
+
+    // Senden des Befehls zum Konfigurieren der Maus über den Befehlsport
+    outb(0x64, 0x20);
+
+    // Warten auf die Bereitschaft der Maus über den Datenport
+    while ((inb(0x64) & 0x01) != 0x01);
+
+    // Lesen der aktuellen Einstellungen über den Datenport
+    char status = inb(0x60);
+
+    // Aktivieren des zweiten Mauskanals
+    status |= 0x02;
+
+    // Schreiben der aktualisierten Einstellungen über den Befehlsport
+    outb(0x64, 0x60);
+    outb(0x60, status);
+
+    // Senden des Befehls zum Konfigurieren der Maus über den Befehlsport
+    outb(0x64, 0xD4);
+
+    // Warten auf die Bereitschaft der Maus über den Datenport
+    while ((inb(0x64) & 0x02) != 0x00);
+
+    // Senden des Befehls zur Aktivierung der Maus über den Datenport
+    outb(0x60, 0xF4);
+
+    // Warten auf die Bereitschaft der Maus über den Statusport
+    while ((inb(0x64) & 0x02) != 0x00);
+}
