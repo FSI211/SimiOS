@@ -3,7 +3,7 @@
 ## Based on: https://github.com/chipsetx/Simple-Kernel-in-C-and-Assembly
 
 # Infos
-> The whole SimiOS Kernel was written in C and asm, but text editor, compiler, text editor was written in C++.
+> The whole SimiOS Kernel was written in C and asm, but text editor and compiler was written in C++.
 > Made by a 12 year old.
 > Inspired by Linux.
 > Based on a random Github Page, link above this text.
@@ -26,5 +26,7 @@ back in cmd: qemu-system-i386 -kernel kernel.iso
 *Then run: qemu-system-i386 -kernel kernel.iso*
 
 ## Idk how to compile on MacOS.
+
+## If find some German Comments, just ignore it.
 
 #  This project will always be OpenSource.
